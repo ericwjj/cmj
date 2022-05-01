@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soft2146.crm.api.mapper.PlanMapper">
+    <update id="deleteBathPlan">
+        update plan
+        set delete_flag = 1 where id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </update>
+
+    <resultMap id="PlanEmpVoMap" type="com.soft2146.crm.api.model.vo.PlanEmpVo">
+        <result column="id" javaType="java.lang.Integer" property="id"/>
+        <result column="employee_id" javaType="java.lang.Integer" property="employeeId"/>
+        <result column="customer_id" javaType="java.lang.Integer" property="customerId"/>
+        <result column="plan_profits" javaType="java.lang.Double" property="planProfits"/>
+        <result column="plan_time" jdbcType="TIMESTAMP" property="planTime"/>
+        <result column="if_reach" javaType="java.lang.Boolean" property="ifReach"/>
+        <result column="implementation" javaType="java.lang.String" property="implementation"/>
+        <result column="cu_name" javaType="java.lang.String" property="cuName"/>
+        <result column="phone" javaType="java.lang.String" property="phone"/>
+        <result column="employee_name" javaType="java.lang.String" property="employeeName"/>
+    </resultMap>
+    <select id="getPlanByEmpId" resultMap="PlanEmpVoMap">
+        SELECT p.id,p.employee_id,p.customer_id,p.plan_profits,p.plan_time,p.if_reach,p.implementation,c.cu_name,c.phone,e.employee_name
+        FROM plan p
+                 LEFT JOIN customer c
+                           ON p.customer_id = c.id
+                 LEFT JOIN employee e
+                           ON p.employee_id = e.id
+        WHERE p.employee_id = #{empId} and p.delete_flag = FALSE
+    </select>
+
+    <resultMap id="PlanVoMap" type="com.soft2146.crm.api.model.vo.PlanVo">
+        <result column="id" javaType="java.lang.Integer" property="id"/>
+        <result column="employee_id" javaType="java.lang.Integer" property="employeeId"/>
+        <result column="customer_id" javaType="java.lang.Integer" property="customerId"/>
+        <result column="plan_profits" javaType="java.lang.Double" property="planProfits"/>
+        <result column="plan_time" jdbcType="TIMESTAMP" property="planTime"/>
+        <result column="if_reach" javaType="java.lang.Boolean" property="ifReach"/>
+        <result column="implementation" javaType="java.lang.String" property="implementation"/>
+        <result column="employee_name" javaType="java.lang.String" property="employeeName"/>
+        <result column="cu_name" javaType="java.lang.String" property="cuName"/>
+    </resultMap>
+    <select id="getPlanListByPage" resultMap="PlanVoMap">
+        select p.id,p.employee_id,p.customer_id,p.plan_profits,p.plan_time,p.if_reach,p.implementation,e.employee_name,c.cu_name
+        from plan p
+                 left join  employee e
+                            on p.employee_id = e.id
+                 left join customer c
+                           on p.customer_id = c.id
+        where p.delete_flag = false
+    </select>
+</mapper>

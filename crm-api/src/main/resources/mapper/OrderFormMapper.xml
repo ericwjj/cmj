@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soft2146.crm.api.mapper.OrderFormMapper">
+
+
+    <resultMap id="OrderVoMap" type="com.soft2146.crm.api.model.vo.OrderVo">
+        <result column="id" javaType="java.lang.Integer" property="id"/>
+        <result column="customer_id" javaType="java.lang.Integer" property="customerId"/>
+        <result column="product_id" javaType="java.lang.Integer" property="productId"/>
+        <result column="number" javaType="java.lang.Integer" property="number"/>
+        <result column="employee_id" javaType="java.lang.Integer" property="employeeId"/>
+        <result column="cu_name" javaType="java.lang.String" property="cuName"/>
+        <result column="product_name" javaType="java.lang.String" property="productName"/>
+        <result column="employee_name" javaType="java.lang.String" property="employeeName"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="price" javaType="java.lang.Double" property="price"/>
+        <result column="img" javaType="java.lang.String" property="img"/>
+    </resultMap>
+    <select id="getOrderListByPage" resultMap="OrderVoMap">
+        select o.id,
+               o.customer_id,
+               o.product_id,
+               o.number,
+               o.employee_id,
+               c.cu_name,
+               p.product_name,
+               e.employee_name,
+               o.create_time,
+               p.price,
+               p.img
+        from order_form o
+                 left join customer c
+                           on o.customer_id = c.id
+                 left join product p
+                           on o.product_id = p.id
+                 left join employee e
+                           on o.employee_id = e.id
+        where o.delete_flag = false
+    </select>
+
+
+    <update id="deleteBathOrder">
+        update order_form
+        set delete_flag = 1 where id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </update>
+
+
+    <resultMap id="CustomerOrdersVoMap" type="com.soft2146.crm.api.model.vo.CustomerOrdersVo">
+        <result column="id" javaType="java.lang.Integer" property="id"/>
+        <result column="customer_id" javaType="java.lang.Integer" property="customerId"/>
+        <result column="product_id" javaType="java.lang.Integer" property="productId"/>
+        <result column="number" javaType="java.lang.Integer" property="number"/>
+        <result column="employee_id" javaType="java.lang.Integer" property="employeeId"/>
+        <result column="product_name" javaType="java.lang.String" property="productName"/>
+        <result column="img" javaType="java.lang.String" property="img"/>
+        <result column="price" javaType="java.lang.Double" property="price"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="employee_name" javaType="java.lang.String" property="employeeName"/>
+    </resultMap>
+    <select id="selectOrdersByCustomer" resultMap="CustomerOrdersVoMap">
+        SELECT o.id,
+               o.customer_id,
+               o.product_id,
+               o.number,
+               o.employee_id,
+               p.product_name,
+               p.img,
+               p.price,
+               o.create_time,
+               e.employee_name
+        FROM order_form o
+                 LEFT JOIN product p ON o.product_id = p.id
+                 LEFT JOIN employee e ON o.employee_id = e.id
+        WHERE o.customer_id = #{customerId}
+          AND o.delete_flag = FALSE
+    </select>
+
+
+</mapper>

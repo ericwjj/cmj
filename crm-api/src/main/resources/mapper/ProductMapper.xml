@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soft2146.crm.api.mapper.ProductMapper">
+    <update id="deleteBathProduct">
+        update product
+        set delete_flag = 1 where id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </update>
+
+
+    <resultMap id="ProductTopVoMap" type="com.soft2146.crm.api.model.vo.ProductTopVo">
+        <result column="product_id" javaType="java.lang.Integer" property="productId"/>
+        <result column="orderNums" javaType="java.lang.Integer" property="orderNums"/>
+    </resultMap>
+    <select id="getTop10List" resultMap="ProductTopVoMap">
+        SELECT
+            product_id,
+            sum( number ) AS orderNums
+        FROM
+            order_form
+        GROUP BY
+            product_id
+        ORDER BY
+            orderNums DESC
+            LIMIT 10;
+    </select>
+
+
+</mapper>

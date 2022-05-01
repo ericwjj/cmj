@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soft2146.crm.api.mapper.PerformanceMapper">
+
+    <update id="deleteBathPerformance">
+        update performance
+        set delete_flag = 1 where id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </update>
+
+    <select id="selectPer" resultType="com.soft2146.crm.api.model.entity.Performance">
+        SELECT *
+        FROM performance
+        WHERE employee_id = #{employeeId}
+          AND now_time = #{nowTime}
+          AND delete_flag = FALSE;
+    </select>
+
+
+    <resultMap id="EmployeeTopVoMap" type="com.soft2146.crm.api.model.vo.EmployeeTopVo">
+        <result column="employee_name" javaType="java.lang.String" property="employeeName"/>
+        <result column="total_money" javaType="java.lang.String" property="totalMoney"/>
+    </resultMap>
+    <select id="getTop10List" resultMap="EmployeeTopVoMap">
+        SELECT
+            employee_name,
+            total_money
+        FROM
+            performance
+        WHERE
+            now_time = '202112'
+          AND delete_flag = FALSE
+        ORDER BY
+            total_money DESC
+            LIMIT 10
+    </select>
+
+</mapper>

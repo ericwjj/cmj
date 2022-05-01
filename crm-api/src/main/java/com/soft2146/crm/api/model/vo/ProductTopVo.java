@@ -1,0 +1,22 @@
+package com.soft2146.crm.api.model.vo;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * @Description:
+ * @Author: Tao
+ * @Date: 2021-12-20 11:06
+ **/
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductTopVo {
+    private Integer productId;
+    private Integer orderNums;
+
+    private String productName;
+}

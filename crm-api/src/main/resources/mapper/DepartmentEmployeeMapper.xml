@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soft2146.crm.api.mapper.DepartmentEmployeeMapper">
+    <update id="deleteBathDepEmp">
+        delete from department_employee where dep_id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </update>
+
+
+</mapper>

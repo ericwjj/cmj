@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soft2146.crm.api.mapper.PositionMapper">
+
+
+    <resultMap id="PositionVoMap" type="com.soft2146.crm.api.model.vo.PositionVo">
+        <result column="id" javaType="java.lang.Integer" property="id"/>
+        <result column="dep_id" javaType="java.lang.Integer" property="depId"/>
+        <result column="position_name" javaType="java.lang.String" property="positionName"/>
+        <result column="work_content" javaType="java.lang.String" property="workContent"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="dep_name" javaType="java.lang.String" property="depName"/>
+    </resultMap>
+    <select id="getPositionListByPage" resultMap="PositionVoMap">
+        select p.id,p.dep_id,p.position_name,p.work_content,p.create_time,d.dep_name
+        from position p
+                 left join department d
+                           on p.dep_id = d.id
+        where p.delete_flag = 0
+    </select>
+
+
+    <update id="deleteBathPosition">
+        update position
+        set delete_flag = 1 where id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </update>
+
+
+    <select id="selectBathPosition" resultType="integer">
+        select dep_id from position where id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </select>
+
+
+    <select id="selectBathPositionId" resultType="integer">
+        select id from position where dep_id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </select>
+
+</mapper>

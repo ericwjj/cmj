@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soft2146.crm.api.mapper.EmployeeMapper">
+    <update id="deleteBathEmployee">
+        update employee
+        set delete_flag = 1 where id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </update>
+
+    <update id="updateBathPosition">
+        update employee
+        set position_id = 0 where position_id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </update>
+
+    <resultMap id="EmployeeVoMap" type="com.soft2146.crm.api.model.vo.EmployeeVo">
+        <result column="id" javaType="java.lang.Integer" property="id"/>
+        <result column="employee_name" javaType="java.lang.String" property="employeeName"/>
+        <result column="sex" javaType="java.lang.String" property="sex"/>
+        <result column="age" javaType="java.lang.Integer" property="age"/>
+        <result column="wage" javaType="java.lang.Double" property="wage"/>
+        <result column="phone" javaType="java.lang.String" property="phone"/>
+
+        <result column="dep_id" javaType="java.lang.Integer" property="depId"/>
+        <result column="dep_name" javaType="java.lang.String" property="depName"/>
+
+        <result column="position_id" javaType="java.lang.Integer" property="positionId"/>
+        <result column="position_name" javaType="java.lang.String" property="positionName"/>
+    </resultMap>
+    <select id="getEmployeeListByPage" resultMap="EmployeeVoMap">
+        SELECT
+            e.id,
+            e.employee_name,
+            e.sex,
+            e.age,
+            e.wage,
+            e.phone,
+            d.id AS dep_id,
+            d.dep_name,
+            p.id AS position_id,
+            p.position_name
+        FROM
+            employee e
+                LEFT JOIN department_employee de ON e.id = de.employee_id
+                LEFT JOIN department d ON d.id = de.dep_id
+                LEFT JOIN position p ON e.position_id = p.id
+        WHERE
+            e.delete_flag = FALSE
+    </select>
+
+
+    <resultMap id="CuAddVoMap" type="com.soft2146.crm.api.model.vo.CuAddVo">
+        <result column="month" javaType="java.lang.Integer" property="month"/>
+        <result column="sums" javaType="java.lang.Integer" property="sums"/>
+    </resultMap>
+    <select id="getThreeMonthNum" resultMap="CuAddVoMap">
+        SELECT DATE_FORMAT(create_time, '%m') AS month,
+	    COUNT(*) AS sums
+        FROM
+            employee
+        WHERE DATE_FORMAT( create_time, '%m' ) IN (10, 11, 12)
+        GROUP BY
+            Month
+        ORDER BY
+            Month
+    </select>
+
+</mapper>

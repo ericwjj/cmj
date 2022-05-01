@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.soft2146.crm.api.mapper.FeedbackMapper">
+    <resultMap id="FeedbackVoMap" type="com.soft2146.crm.api.model.vo.FeedbackVo">
+        <result column="id" javaType="java.lang.Integer" property="id"/>
+        <result column="content" javaType="java.lang.String" property="content"/>
+        <result column="customer_id" javaType="java.lang.Integer" property="customerId"/>
+        <result column="product_id" javaType="java.lang.Integer" property="productId"/>
+        <result column="dispose_id" javaType="java.lang.Integer" property="disposeId"/>
+        <result column="solve_result" javaType="java.lang.String" property="solveResult"/>
+        <result column="status" javaType="java.lang.Integer" property="status"/>
+        <result column="cu_name" javaType="java.lang.String" property="cuName"/>
+        <result column="product_name" javaType="java.lang.String" property="productName"/>
+        <result column="employee_name" javaType="java.lang.String" property="employeeName"/>
+    </resultMap>
+    <select id="getFeedbackListByPage" resultMap="FeedbackVoMap">
+        select f.id,f.content,f.customer_id,f.product_id,f.dispose_id,f.solve_result,f.`status`,c.cu_name,p.product_name,e.employee_name
+        from feedback f
+                 left join customer c
+                           on f.customer_id = c.id
+                 left join product p
+                           on f.product_id = p.id
+                 left join employee e
+                           on f.dispose_id = e.id
+        where f.delete_flag = false order by f.create_time
+    </select>
+
+
+    <update id="deleteBathFeedback">
+        update feedback
+        set delete_flag = 1 where id in
+        <foreach close=")" collection="ids" index="index" item="mid" open="(" separator=",">
+            #{mid}
+        </foreach>;
+    </update>
+
+</mapper>
